@@ -1,0 +1,6 @@
+# DOMAIN        FLAG    PATH    SECURE  EXPIRY  NAME        VALUE
+
+.httpbin.org	TRUE	/	FALSE	2556057600	sessionid	abc123xyz
+.httpbin.org	TRUE	/	FALSE	2556057600	auth_token	def456uvw
+.httpbin.org	TRUE	/	FALSE	2556057600	theme	dark
+.httpbin.org	TRUE	/	FALSE	2556057600	location	mumbai

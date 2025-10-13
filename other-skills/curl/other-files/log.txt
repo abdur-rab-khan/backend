@@ -1,0 +1,38 @@
+== Info: Host httpbin.org:443 was resolved.
+== Info: IPv6: (none)
+== Info: IPv4: 54.160.221.192, 107.22.25.208, 44.208.155.18, 52.3.132.113
+== Info:   Trying 54.160.221.192:443...
+== Info: schannel: disabled automatic use of client certificate
+== Info: ALPN: curl offers http/1.1
+== Info: ALPN: server accepted http/1.1
+== Info: Connected to httpbin.org (54.160.221.192) port 443
+== Info: using HTTP/1.x
+=> Send header, 103 bytes (0x67)
+0000: GET /get?name=abdurrab%26age%3d21 HTTP/1.1
+002c: Host: httpbin.org
+003f: User-Agent: curl/8.14.1
+0058: Accept: */*
+0065: 
+== Info: Request completely sent off
+<= Recv header, 46 bytes (0x2e)
+0000: HTTP/1.1 503 Service Temporarily Unavailable
+<= Recv header, 20 bytes (0x14)
+0000: Server: awselb/2.0
+<= Recv header, 37 bytes (0x25)
+0000: Date: Mon, 13 Oct 2025 17:41:30 GMT
+<= Recv header, 25 bytes (0x19)
+0000: Content-Type: text/html
+<= Recv header, 21 bytes (0x15)
+0000: Content-Length: 162
+<= Recv header, 24 bytes (0x18)
+0000: Connection: keep-alive
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 162 bytes (0xa2)
+0000: <html>
+0008: <head><title>503 Service Temporarily Unavailable</title></head>
+0049: <body>
+0051: <center><h1>503 Service Temporarily Unavailable</h1></center>
+0090: </body>
+0099: </html>
+== Info: Connection #0 to host httpbin.org left intact

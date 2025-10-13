@@ -1,0 +1,14 @@
+{
+  "args": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Authorization": "Bearer token123", 
+    "Content-Type": "application/json", 
+    "Cookie": "theme=dark;username=abdurrabkhan", 
+    "Host": "httpbin.org", 
+    "User-Agent": "curl/8.14.1", 
+    "X-Amzn-Trace-Id": "Root=1-68ed3ee3-695ee1287b30cfa04f3646a6"
+  }, 
+  "origin": "139.5.49.130", 
+  "url": "https://httpbin.org/get"
+}

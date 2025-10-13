@@ -1,0 +1,7 @@
+url = "https://httpbin.org/get"
+request = "GET"
+header = "Authorization: Bearer token123"
+header = "Content-Type: application/json"
+cookie = "theme=dark"
+cookie = "username=abdurrabkhan"
+output = "config_example.json"
