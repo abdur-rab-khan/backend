@@ -1,5 +1,10 @@
 url = "https://httpbin.org/get"
+silent
+write-out = "Status: %{http_code}\nContent-Type: %{content_type}\nNum Redirects: %{num_redirects}\nMethod: %{method}\nSchema: %{scheme}\nHostName: %{url.host}"
+trace-ascii = "log.txt"
 request = "GET"
+create-dirs
+output = "response/output/data/response.json"
 header = "Authorization: Bearer token123"
 header = "Content-Type: application/json"
 cookie = "theme=dark"

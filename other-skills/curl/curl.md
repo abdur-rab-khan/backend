@@ -19,14 +19,19 @@
       - [Example of header](#example-of-header)
       - [`@-` Symbol](#--symbol)
       - [`-D, --dump-header <file>`](#-d---dump-header-file)
-    - [3. `--url-query <data>`](#3---url-query-data)
-      - [Example of url-query](#example-of-url-query)
+    - [3. Methods of sending data](#3-methods-of-sending-data)
+      - [1. `-d, --data <data>`](#1--d---data-data)
+        - [Example of data](#example-of-data)
+      - [2. `--json <data/file>`](#2---json-datafile)
+        - [Example of json](#example-of-json)
+      - [3. `-T, --upload-file <file>`](#3--t---upload-file-file)
+        - [Example of upload-file](#example-of-upload-file)
+      - [4. `-F, --form <name=content>`](#4--f---form-namecontent)
+        - [Example of form](#example-of-form)
     - [4. `--url <url/file>`](#4---url-urlfile)
       - [Example of url](#example-of-url)
-    - [4. `-T, --upload-file <file>`](#4--t---upload-file-file)
-      - [Example of upload-file](#example-of-upload-file)
-    - [5. `-F, --form <name=content>`](#5--f---form-namecontent)
-      - [Example of form](#example-of-form)
+    - [3. `--url-query <data>`](#3---url-query-data)
+      - [Example of url-query](#example-of-url-query)
     - [6. `-Z, --parallel`](#6--z---parallel)
       - [Example of parallel](#example-of-parallel)
     - [7. `-b, --cookie <data/file>`](#7--b---cookie-datafile)
@@ -147,6 +152,7 @@ This expands to: `http://localhost:3000?x=abdurrab_khan`
 | `-o file`          | Save to specific file  | `-o result.html`                                |
 | `-O`               | Use URL's filename     | `-O` (saves as `index.html` from `/index.html`) |
 | `--output-dir dir` | Save in directory      | `--output-dir downloads`                        |
+| `--create-dirs`    | Create dirs if needed  | `--create-dir data/files`                       |
 | `-J`               | Use server's filename  | `-J -O`                                         |
 | `-o "#1"`          | Use glob match in name | `-o "page#1.html"`                              |
 
@@ -332,46 +338,163 @@ echo "Authorization: Bearer token123" | curl -H @- https://api.example.com
 - Use `-` to write headers to stdout (terminal).
 - Can be combined with `-o` to save body and headers separately.
 
-### 3. `--url-query <data>`
+### 3. Methods of sending data
 
-- Adds query parameters to the URL (the part after `?`).
-- Use multiple times to add multiple parameters.
-- Prefix with `+` to skip URL encoding (sends data as-is).
+#### 1. `-d, --data <data>`
 
-**Common patterns:**
+- Sends data in HTTP POST requests (or PUT/PATCH with `-X`).
+- Default `Content-Type`: `application/x-www-form-urlencoded`
 
-| Pattern      | Description             | Example                           |
-| ------------ | ----------------------- | --------------------------------- |
-| `name=value` | Add single parameter    | `--url-query "name=John"`         |
-| `name@file`  | Read value from file    | `--url-query "data@file.txt"`     |
-| `+raw`       | Skip encoding (use raw) | `--url-query "+name=John&age=21"` |
+**Input methods:**
+
+| Method             | Description                 | Example                            |
+| ------------------ | --------------------------- | ---------------------------------- |
+| `"key=value"`      | Direct string               | `-d "name=John"`                   |
+| `@file`            | Read from file              | `-d @data.txt`                     |
+| `@-`               | Read from stdin             | `echo "name=John" \| curl -d @-`   |
+| Multiple `-d`      | Multiple fields (auto `&`)  | `-d "name=John" -d "age=30"`       |
+| `--data-raw`       | No special chars processing | `--data-raw "@file.txt"`           |
+| `--data-binary`    | Keep newlines/binary data   | `--data-binary @file.bin`          |
+| `--data-urlencode` | Auto URL-encode             | `--data-urlencode "name=John Doe"` |
+
+**Special flags:**
+
+- `--get`: Converts POST to GET (appends data as query params)
+- `-X PUT`: Changes method to PUT instead of POST
+
+##### Example of data
+
+```bash
+# Simple POST
+curl -d "name=john&age=30" https://httpbin.org/post
+
+# From file
+curl -d @data.txt https://httpbin.org/post
+
+# From stdin
+echo "name=john" | curl -d @- https://httpbin.org/post
+
+# Multiple fields
+curl -d "name=john" -d "age=30" https://httpbin.org/post
+
+# URL encode spaces
+curl --data-urlencode "name=John Doe" https://httpbin.org/post
+
+# Send as GET request
+curl --get -d "search=term" https://example.com/api
+```
+
+**Quick tip:** Use `--data-raw "@text"` when your data contains literal `@` symbols.
+
+#### 2. `--json <data/file>`
+
+- Sends JSON data in HTTP POST requests (or PUT/PATCH with `-X`).
+- Automatically sets `Content-Type: application/json` header.
+
+**Input methods:**
+
+| Method            | Description                           | Example                                        |
+| ----------------- | ------------------------------------- | ---------------------------------------------- |
+| `data`            | Direct JSON string                    | `--json '{"name":"John"}'`                     |
+| `@file`           | Read JSON from file                   | `--json @data.json`                            |
+| `@-`              | Read JSON from stdin                  | `echo '{"name":"John"}' \| curl --json @-`     |
+| Multiple `--json` | Multiple JSON objects (last one used) | `--json '{"name":"John"}' --json '{"age":30}'` |
+
+##### Example of json
+
+```bash
+# Simple JSON POST
+curl --json '{"name":"John","age":30}' https://httpbin.org/post
+
+# From JSON file
+curl --json @data.json https://httpbin.org/post
+
+# From stdin
+echo '{"name":"John","age":30}' | curl --json @- https://httpbin.org/post
+
+# Multiple JSON objects (last one used)
+curl --json '{"name":"John"}' --json '{"age":30}' https://httpbin.org/post
+```
+
+#### 3. `-T, --upload-file <file>`
+
+- Uploads a file to a server (HTTP PUT, FTP, SFTP, SCP).
+- Use `-` to upload from keyboard input (stdin).
+- Works with multiple files using multiple `-T` flags or globbing patterns.
+
+**Basic patterns:**
+
+| Pattern                | Description           | Example                      |
+| ---------------------- | --------------------- | ---------------------------- |
+| `-T file`              | Upload single file    | `-T document.txt`            |
+| `-T -`                 | Upload from stdin     | `-T - < file.txt`            |
+| `-T {a,b}`             | Upload multiple files | `-T "{file1.txt,file2.txt}"` |
+| `-T [1-3]`             | Upload with globbing  | `-T "file[1-3].txt"`         |
+| `--max-filesize <num>` | Limit upload size     | `--max-filesize 1000000`     |
 
 **Important notes:**
 
-- Parameters are automatically URL-encoded unless prefixed with `+`.
-- Works with all HTTP methods (GET, POST, etc.).
-- Can combine with globbing patterns in URLs.
+- For FTP, use `--user username:password` for authentication.
+- For HTTP PUT, the server must support file uploads.
+- When uploading multiple files, specify target URLs separately or use the same URL for all.
 
-#### Example of url-query
+##### Example of upload-file
 
 ```bash
-# Single parameter
-curl --url-query "name=abdurrab" https://httpbin.org/post
+# Upload single file to FTP
+curl -T file.txt ftp://ftp.example.com/ --user username:password
 
-# Read parameter value from file
-curl --url-query "name@file.txt" https://httpbin.org/post
+# Upload multiple files (list)
+curl -T "{file1.txt,file2.txt}" ftp://ftp.example.com/ --user username:password
 
-# Multiple parameters (raw/unencoded)
-curl --url-query "+name=abdurrab&age=21&skill=dev" https://httpbin.org/post
+# Upload multiple files (range)
+curl -T "file[1-3].txt" ftp://ftp.example.com/ --user username:password
 
-# Multiple --url-query flags
-curl --url-query "name=abdurrab" --url-query "age=21" https://httpbin.org/post
+# Upload from stdin
+curl -T - ftp://ftp.example.com/remote.txt --user username:password < local.txt
+echo "content" | curl -T - ftp://ftp.example.com/file.txt --user username:password
 
-# With globbing pattern
-curl "https://httpbin.org/post?id=[1-5]"
+# Upload to HTTP PUT endpoint
+curl -T file.txt http://example.com/upload
 
-# Combine with other options
-curl -X POST --url-query "status=active" --url-query "limit=10" https://api.example.com/users
+# Upload different files to different URLs
+curl -T file1.txt http://example.com/upload1 -T file2.txt http://example.com/upload2
+```
+
+#### 4. `-F, --form <name=content>`
+
+- Sends form data using `multipart/form-data` (HTTP POST).
+- **Basic syntax:** `name=value` for text fields.
+- **File upload:** `name=@filepath` sends file with filename.
+- **File content only:** `name=<filepath` sends content without filename.
+
+**Common patterns:**
+
+| Pattern                    | Description            | Example                               |
+| -------------------------- | ---------------------- | ------------------------------------- |
+| `name=value`               | Send text field        | `name=John`                           |
+| `name=@file`               | Upload file            | `photo=@image.jpg`                    |
+| `name=<file`               | Send file content only | `text=<data.txt`                      |
+| `field;type=mime`          | Set content type       | `file=@doc.pdf;type=application/pdf`  |
+| `file=@path;filename=name` | Custom filename        | `file=@local.jpg;filename=remote.jpg` |
+
+##### Example of form
+
+```bash
+# Text fields
+curl -F "name=abdurrab" -F "age=21" https://httpbin.org/post
+
+# Upload file
+curl -F "image=@/path/to/image.jpg" https://httpbin.org/post
+
+# Send file content as text
+curl -F "description=<description.txt" https://httpbin.org/post
+
+# Set content type
+curl -F "web=@index.html;type=text/html" https://httpbin.org/post
+
+# Custom server filename
+curl -F "file=@local.txt;filename=server.txt" https://httpbin.org/post
 ```
 
 ### 4. `--url <url/file>`
@@ -413,85 +536,46 @@ echo "https://example.com" | curl --url @-
 
 **Note:** The `--url` option is often optional - you can provide URLs directly: `curl https://example.com`
 
-### 4. `-T, --upload-file <file>`
+### 3. `--url-query <data>`
 
-- Uploads a file to a server (HTTP PUT, FTP, SFTP, SCP).
-- Use `-` to upload from keyboard input (stdin).
-- Works with multiple files using multiple `-T` flags or globbing patterns.
-
-**Basic patterns:**
-
-| Pattern                | Description           | Example                      |
-| ---------------------- | --------------------- | ---------------------------- |
-| `-T file`              | Upload single file    | `-T document.txt`            |
-| `-T -`                 | Upload from stdin     | `-T - < file.txt`            |
-| `-T {a,b}`             | Upload multiple files | `-T "{file1.txt,file2.txt}"` |
-| `-T [1-3]`             | Upload with globbing  | `-T "file[1-3].txt"`         |
-| `--max-filesize <num>` | Limit upload size     | `--max-filesize 1000000`     |
-
-**Important notes:**
-
-- For FTP, use `--user username:password` for authentication.
-- For HTTP PUT, the server must support file uploads.
-- When uploading multiple files, specify target URLs separately or use the same URL for all.
-
-#### Example of upload-file
-
-```bash
-# Upload single file to FTP
-curl -T file.txt ftp://ftp.example.com/ --user username:password
-
-# Upload multiple files (list)
-curl -T "{file1.txt,file2.txt}" ftp://ftp.example.com/ --user username:password
-
-# Upload multiple files (range)
-curl -T "file[1-3].txt" ftp://ftp.example.com/ --user username:password
-
-# Upload from stdin
-curl -T - ftp://ftp.example.com/remote.txt --user username:password < local.txt
-echo "content" | curl -T - ftp://ftp.example.com/file.txt --user username:password
-
-# Upload to HTTP PUT endpoint
-curl -T file.txt http://example.com/upload
-
-# Upload different files to different URLs
-curl -T file1.txt http://example.com/upload1 -T file2.txt http://example.com/upload2
-```
-
-### 5. `-F, --form <name=content>`
-
-- Sends form data using `multipart/form-data` (HTTP POST).
-- **Basic syntax:** `name=value` for text fields.
-- **File upload:** `name=@filepath` sends file with filename.
-- **File content only:** `name=<filepath` sends content without filename.
+- Adds query parameters to the URL (the part after `?`).
+- Use multiple times to add multiple parameters.
+- Prefix with `+` to skip URL encoding (sends data as-is).
 
 **Common patterns:**
 
-| Pattern                    | Description            | Example                               |
-| -------------------------- | ---------------------- | ------------------------------------- |
-| `name=value`               | Send text field        | `name=John`                           |
-| `name=@file`               | Upload file            | `photo=@image.jpg`                    |
-| `name=<file`               | Send file content only | `text=<data.txt`                      |
-| `field;type=mime`          | Set content type       | `file=@doc.pdf;type=application/pdf`  |
-| `file=@path;filename=name` | Custom filename        | `file=@local.jpg;filename=remote.jpg` |
+| Pattern      | Description             | Example                           |
+| ------------ | ----------------------- | --------------------------------- |
+| `name=value` | Add single parameter    | `--url-query "name=John"`         |
+| `name@file`  | Read value from file    | `--url-query "data@file.txt"`     |
+| `+raw`       | Skip encoding (use raw) | `--url-query "+name=John&age=21"` |
 
-#### Example of form
+**Important notes:**
+
+- Parameters are automatically URL-encoded unless prefixed with `+`.
+- Works with all HTTP methods (GET, POST, etc.).
+- Can combine with globbing patterns in URLs.
+
+#### Example of url-query
 
 ```bash
-# Text fields
-curl -F "name=abdurrab" -F "age=21" https://httpbin.org/post
+# Single parameter
+curl --url-query "name=abdurrab" https://httpbin.org/post
 
-# Upload file
-curl -F "image=@/path/to/image.jpg" https://httpbin.org/post
+# Read parameter value from file
+curl --url-query "name@file.txt" https://httpbin.org/post
 
-# Send file content as text
-curl -F "description=<description.txt" https://httpbin.org/post
+# Multiple parameters (raw/unencoded)
+curl --url-query "+name=abdurrab&age=21&skill=dev" https://httpbin.org/post
 
-# Set content type
-curl -F "web=@index.html;type=text/html" https://httpbin.org/post
+# Multiple --url-query flags
+curl --url-query "name=abdurrab" --url-query "age=21" https://httpbin.org/post
 
-# Custom server filename
-curl -F "file=@local.txt;filename=server.txt" https://httpbin.org/post
+# With globbing pattern
+curl "https://httpbin.org/post?id=[1-5]"
+
+# Combine with other options
+curl -X POST --url-query "status=active" --url-query "limit=10" https://api.example.com/users
 ```
 
 ### 6. `-Z, --parallel`
@@ -580,18 +664,25 @@ curl -b cookies.txt -c cookies.txt https://example.com
 
 **Useful variables:**
 
-| Variable         | Description                        |
-| ---------------- | ---------------------------------- |
-| `http_code`      | HTTP status code (200, 404, etc.)  |
-| `time_total`     | Total request time (seconds)       |
-| `time_connect`   | Time to establish connection       |
-| `size_download`  | Total bytes downloaded             |
-| `size_upload`    | Total bytes uploaded               |
-| `url_effective`  | Final URL (after redirects)        |
-| `content_type`   | Response Content-Type              |
-| `num_redirects`  | Number of redirects                |
-| `speed_download` | Average download speed (bytes/sec) |
-| `json`           | All variables in JSON format       |
+| Variable         | Description                                                      |
+| ---------------- | ---------------------------------------------------------------- |
+| `url`            | The requested URL -> (url.host, .scheme, .port, .path, .query, ) |
+| `http_code`      | HTTP status code (200, 404, etc.)                                |
+| `http_version`   | HTTP version (1.0, 1.1, 2, etc.)                                 |
+| `http_connect`   | HTTP connect code (proxy status)                                 |
+| `local_ip`       | Local IP address                                                 |
+| `local_port`     | Local port number                                                |
+| `redirect_url`   | URL after redirects                                              |
+| `num_redirects`  | Number of redirects                                              |
+| `url_effective`  | Final URL (after redirects)                                      |
+| `scheme`         | URL scheme (http, https, ftp)                                    |
+| `content_type`   | Response Content-Type                                            |
+| `size_download`  | Total bytes downloaded                                           |
+| `size_upload`    | Total bytes uploaded                                             |
+| `speed_download` | Average download speed (bytes/sec)                               |
+| `time_total`     | Total request time (seconds)                                     |
+| `time_connect`   | Time to establish connection                                     |
+| `json`           | All variables in JSON format                                     |
 
 #### Example of write-out
 
@@ -705,6 +796,37 @@ curl --compressed https://example.com/large-file.json -o data.json
 - Quote values with spaces: `"value with spaces"`
 - Escape sequences: `\n`, `\t`, `\\`
 
+**File format rules:**
+
+- Remove the leading dashes from curl options
+- Long options: Remove `--` (e.g., `--output` → `output`)
+- Short options: Remove `-` (e.g., `-H` → `header`)
+
+**Examples:**
+
+```txt
+# Original command line:
+curl -X POST --header "Content-Type: application/json" -d "data" --output file.txt
+
+# In config file:
+request = "POST"
+header = "Content-Type: application/json"
+data = "data"
+output = "file.txt"
+```
+
+**Quick reference:**
+
+| Command line       | Config file |
+| ------------------ | ----------- |
+| `--output`         | `output`    |
+| `-H` / `--header`  | `header`    |
+| `-d` / `--data`    | `data`      |
+| `-X` / `--request` | `request`   |
+| `-o`               | `output`    |
+| `--url`            | `url`       |
+| `-v` / `--verbose` | `verbose`   |
+
 **Common patterns:**
 
 | Pattern     | Description                       |
@@ -797,3 +919,33 @@ curl -q -K custom.txt
 
    - Time in seconds to consider for speed limit.
      - Example: `curl --speed-limit 1000 --speed-time 10 http://example.com` # Stop if speed < 1000 bytes/sec for 10 seconds
+
+10. `-:, --next`
+
+    - Allows us to specify multiple requests in a single command line. Each `--next` indicates the start of a new request.
+      - Example: `curl http://example.com --next -X POST -d "name=John" http://example.com/api`
+
+11. `-L, --location`
+
+    - Follow redirects (HTTP 3xx responses).
+      - Example: `curl -L http://example.com` # Follows redirects to the final URL
+
+12. `-s, --silent`
+
+    - Silent mode. Hides progress meter and error messages.
+      - Example: `curl -s http://example.com` # No output unless there's an error
+
+13. `-I, --head`
+
+    - Fetch only the headers of a response (HEAD request).
+      - Example: `curl -I http://example.com` # Shows only response headers
+
+14. `--output-null`
+
+    - Discards the output (like sending to `/dev/null`).
+      - Example: `curl --output-null http://example.com` # No output is shown or saved
+
+15. `--list-only`
+
+    - List only the names of files in an FTP directory.
+      - Example: `curl --list-only ftp://ftp.example.com/` # Lists files in the FTP directory
