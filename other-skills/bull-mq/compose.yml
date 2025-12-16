@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:8.0
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_ARGS: --requirepass ${REDIS_PASSWORD:?"Error:\ Redis password is required"}
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  redis-data:
+    driver: local
+    labels:
+      com.docker.compose.project: bullmq
