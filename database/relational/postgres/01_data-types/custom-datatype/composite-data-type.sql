@@ -1,0 +1,18 @@
+DROP TABLE IF EXISTS customers;
+DROP TYPE IF EXISTS address;
+
+-- CREATING CUSTOM DATATYPE CALLED ADDRESS
+CREATE TYPE address AS (
+    street VARCHAR(100),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    zip_code VARCHAR(10)
+);
+
+-- USING ADDRESS IN CUSTOMERS TABLE
+CREATE TABLE CUSTOMERS (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    home_address address
+)
+

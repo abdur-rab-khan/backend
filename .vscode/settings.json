@@ -9,7 +9,18 @@
       "driver": "PostgreSQL",
       "name": "postgres",
       "username": "postgres",
-      "database": "postgres"
+      "database": "dvdrental"
+    },
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5555,
+      "driver": "PostgreSQL",
+      "name": "mydb",
+      "database": "mydb",
+      "username": "postgres"
     }
-  ]
+  ],
+  "cSpell.words": ["Savepoints"]
 }
