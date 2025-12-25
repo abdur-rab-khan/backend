@@ -18,6 +18,9 @@
     - [Querying JSON and JSONB Data](#querying-json-and-jsonb-data)
     - [Important JSON Operators and Functions](#important-json-operators-and-functions)
   - [UUID Type](#uuid-type)
+  - [SERIAL Type](#serial-type)
+  - [DATE, TIME and TIMESTAMP Types](#date-time-and-timestamp-types)
+  - [BYTEA Types](#bytea-types)
 
 ## Boolean Type
 
@@ -367,4 +370,199 @@
 
   ```sql
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+  ```
+
+## SERIAL Type
+
+- PostgreSQL provides the `SERIAL` data type as a convenient way to create auto-incrementing integer columns, typically used for primary keys.
+- When you define a column as `SERIAL` pseudo-type, PostgreSQL automatically creates a sequence object and sets the default value of the column to the next value from that sequence.
+- Here is an example of how to create a table with a `SERIAL` data type in PostgreSQL:
+
+  ```sql
+  CREATE TABLE employees (
+      employee_id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
+      first_name VARCHAR(50) NOT NULL,
+      last_name VARCHAR(50) NOT NULL,
+      hire_date DATE NOT NULL
+  );
+
+  INSERT INTO employees (first_name, last_name, hire_date) VALUES
+  ('Alice', 'Smith', '2022-01-15'),
+  ('Bob', 'Johnson', '2022-02-20'),
+  ('Charlie', 'Brown', '2022-03-10');
+  ```
+
+  - We can use `DEFAULT` keyword to insert the next value from the sequence explicitly:
+
+    ```sql
+    INSERT INTO employees (employee_id, first_name, last_name, hire_date)
+    VALUES (DEFAULT, 'David', 'Wilson', '2022-04-05')
+    RETURNING employee_id;
+    ```
+
+    - `RETURNING` clause returns the generated `employee_id` after the insert operation.
+
+- Note that `SERIAL` is not a true data type but a shorthand for creating an integer column with an associated sequence. The actual data type of a `SERIAL` column is `INTEGER`.
+- PostgreSQL also provides `BIGSERIAL` for larger auto-incrementing integers and `SMALLSERIAL` for smaller ones:
+
+  | Data Type     | Description                     | Storage Size | Range                          |
+  | ------------- | ------------------------------- | ------------ | ------------------------------ |
+  | `SMALLSERIAL` | Auto-incrementing small integer | 2 bytes      | 1 to 32,767                    |
+  | `SERIAL`      | Auto-incrementing integer       | 4 bytes      | 1 to 2,147,483,647             |
+  | `BIGSERIAL`   | Auto-incrementing big integer   | 8 bytes      | 1 to 9,223,372,036,854,775,807 |
+
+## DATE, TIME and TIMESTAMP Types
+
+- These data types are used to store, handle, and manipulate date and time values in PostgreSQL.
+
+- Here are the commonly used date and time data types in PostgreSQL:
+
+  | Data Type     | Description                                  | Storage Size | Example                           |
+  | ------------- | -------------------------------------------- | ------------ | --------------------------------- |
+  | `DATE`        | Stores calendar date (year, month, day)      | 4 bytes      | `birth_date DATE NOT NULL`        |
+  | `TIME`        | Stores time of day (hours, minutes, seconds) | 8 bytes      | `appointment_time TIME NOT NULL`  |
+  | `TIMESTAMP`   | Stores both date and time (without timezone) | 8 bytes      | `created_at TIMESTAMP NOT NULL`   |
+  | `TIMESTAMPTZ` | Stores both date and time with timezone      | 8 bytes      | `updated_at TIMESTAMPTZ NOT NULL` |
+
+- **`DATE`**: Used to store calender dates in the format `YYYY-MM-DD`, e.g., `2023-10-15`.
+
+  - If we want to create a table with a `DATA` column, that takes current data as default value, we can use `CURRENT_DATE`:
+
+    ```sql
+    CREATE TABLE post (
+        message_id SERIAL PRIMARY KEY,
+        message VARCHAR(100) NOT NULL,
+        recipient VARCHAR(100) NOT NULL,
+        post_date DATE DEFAULT CURRENT_DATE
+    );
+    ```
+
+  - Postgres also provides various functions to manipulate and format date values, such as `AGE()`, `DATE_PART()`, `TO_CHAR()` and `EXTRACT()`.
+
+    - For example, to calculate the age based on a birth date:
+
+      ```sql
+      SELECT name, birth_date, AGE(CURRENT_DATE, birth_date) AS age
+      FROM users;
+      ```
+
+    - Format date using `TO_CHAR()` function:
+
+      ```sql
+      SELECT TO_CHAR(birth_date, 'DD Mon YYYY') AS formatted_date -- Returns date in '15 Oct 2023' format
+      FROM users;
+      ```
+
+    - Extract specific parts of a date:
+
+      ```sql
+      SELECT EXTRACT(YEAR FROM birth_date) AS birth_year, -- eg. 1990
+             EXTRACT(MONTH FROM birth_date) AS birth_month, -- eg. 10
+             EXTRACT(DAY FROM birth_date) AS birth_day -- eg. 15
+      FROM users;
+      ```
+
+  - We can see the current date, timestamp, now using the following commands:
+
+    ```sql
+    SELECT CURRENT_DATE; -- Returns the current date
+    SELECT CURRENT_TIMESTAMP; -- Returns the current date and time
+    SELECT NOW(); -- Returns the current date and time
+
+    SHOW timezone; -- Displays the current timezone setting
+    SET timezone = 'UTC'; -- Sets the timezone to UTC
+    ```
+
+- **`TIME`**: Used to store time of day in the format `HH:MI:SS`, e.g., `14:30:00`.
+
+  - To create a table with a `TIME` column that takes current time as default value, we can use `CURRENT_TIME`:
+
+    ```sql
+    CREATE TABLE meetings (
+        meeting_id SERIAL PRIMARY KEY,
+        meeting_topic VARCHAR(100) NOT NULL,
+        meeting_time TIME DEFAULT CURRENT_TIME
+    );
+    ```
+
+  - Postgres provides various functions to manipulate and format time values, such as `TO_CHAR()`, `DATE_PART()`, and `EXTRACT()`.
+
+    - Format time using `TO_CHAR()` function:
+
+      ```sql
+      SELECT TO_CHAR(meeting_time, 'HH12:MI AM') AS formatted_time -- Returns time in '02:30 PM' format
+      FROM meetings;
+      ```
+
+    - Extract specific parts of a time:
+
+      ```sql
+      SELECT EXTRACT(HOUR FROM meeting_time) AS meeting_hour, -- eg. 14
+             EXTRACT(MINUTE FROM meeting_time) AS meeting_minute, -- eg. 30
+             EXTRACT(SECOND FROM meeting_time) AS meeting_second -- eg. 0
+      FROM meetings;
+      ```
+
+  - Using `SELECT LOCALTIME AT TIME ZONE 'UTC';` we can convert local time to UTC time.
+
+- **`TIMESTAMP/TIMESTAMPZ`**: Used to store both date and time in the format `YYYY-MM-DD HH:MI:SS`, e.g., `2023-10-15 14:30:00`.
+
+  - `TIMESTAMP` does not store timezone information, while `TIMESTAMPTZ` stores timezone information along with date and time.
+  - We can use `TIMESTAMP` to easily convert between time zones.
+
+    ```sql
+    SELECT '2023-10-15 14:30:00'::TIMESTAMP AT TIME ZONE 'America/New_York' AS ny_time,
+           '2023-10-15 14:30:00'::TIMESTAMP AT TIME ZONE 'UTC' AS utc_time;
+    ```
+
+  - To create a table with a `TIMESTAMP` column that takes current timestamp as default value, we can use `CURRENT_TIMESTAMP`:
+
+    ```sql
+    CREATE TABLE events (
+        event_id SERIAL PRIMARY KEY,
+        event_name VARCHAR(100) NOT NULL,
+        event_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
+
+  - Let's create a table with `created_at` and `updated_at` columns with triggers to automatically set timestamps:
+
+    ```sql
+    CREATE TABLE articles (
+        article_id SERIAL PRIMARY KEY,
+        title VARCHAR(200) NOT NULL,
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER set_updated_at
+    BEFORE UPDATE ON articles
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+    ```
+
+## BYTEA Types
+
+- PostgreSQL provides the `BYTEA` data type to store binary data, such as images, files, or any other binary content.
+- Here is an example of how to create a table with a `BYTEA` data type in PostgreSQL:
+
+  ```sql
+  CREATE TABLE files (
+      file_id SERIAL PRIMARY KEY,
+      file_name VARCHAR(100) NOT NULL,
+      file_data BYTEA NOT NULL -- BYTEA column to store binary data
+  );
+
+  INSERT INTO files (file_name, file_data) VALUES
+  ('example_image.png', decode('89504E470D0A1A0A0000000D49484452...', 'hex')),
+  ('document.pdf', decode('255044462D312E350D0A25E2E3CFD30...', 'hex'));
   ```
