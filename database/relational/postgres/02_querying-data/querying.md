@@ -7,6 +7,8 @@
     - [Example](#example)
   - [Column Aliases](#column-aliases)
     - [Example](#example-1)
+  - [Order By Clause](#order-by-clause)
+  - [Distinct Clause](#distinct-clause)
 
 ## Basic `SELECT` Statement
 
@@ -15,9 +17,9 @@
 - The `SELECT` statement has the following clause:
 
   1. `FROM`: Specifies the table from which to retrieve the data.
-  2. `DISTINCT`: Used to return only distinct (different) values.
+  2. [`DISTINCT`](#distinct-clause): Used to return only distinct (different) values.
   3. `WHERE`: Filters the results based on specified conditions.
-  4. `ORDER BY`: Sorts the results in ascending or descending order.
+  4. [`ORDER BY`](#order-by-clause): Sorts the results in ascending or descending order.
   5. `LIMIT`: Restricts the number of rows returned.
   6. `OFFSET`: Skips a specified number of rows before starting to return rows.
   7. `GROUP BY`: Groups rows that have the same values in specified columns into summary rows.
@@ -104,3 +106,69 @@
   FROM employees
   GROUP BY department;
   ```
+
+## Order By Clause
+
+- Using `SELECT` statement it will return the data in a random order by default, but we can use the `ORDER BY` clause to sort the result set based on **one or more columns**, or using any **expressions**.
+- The `ORDER BY` clause cames with two sorting options:
+  - `ASC` (Ascending): Sorts the results from lowest to highest (default).
+  - `DESC` (Descending): Sorts the results from highest to lowest.
+- You can also sort by multiple columns by separating them with commas.
+- Example of using `ORDER BY` clause:
+
+  ```sql
+  SELECT first_name, last_name
+  FROM customers
+  ORDER BY
+    salary DESC,
+    last_name ASC; -- Sort by salary in descending order, then by last name in ascending order
+  ```
+
+- You can also use expressions in the `ORDER BY` clause:
+
+  ```sql
+  SELECT first_name, last_name, LENGTH(first_name) AS name_length
+  FROM customers
+  ORDER BY name_length DESC; -- Sort by the length of the first name in descending order, longest names first
+  ```
+
+- You can also sort by column position in the `SELECT` statement:
+
+  ```sql
+  SELECT first_name, last_name, salary
+  FROM customers
+  ORDER BY 3 DESC; -- Sort by the third column (salary) in descending order
+  ```
+
+- Let's sort by using `NULLS FIRST` and `NULLS LAST` options:
+
+  ```sql
+  SELECT first_name, last_name, salary
+  FROM customers
+  ORDER BY salary DESC NULLS LAST; -- Sort by salary in descending order, placing NULL values at the end
+  ```
+
+  - `NULLS FIRST`: Places NULL values at the beginning of the sorted result.
+  - `NULLS LAST`: Places NULL values at the end of the sorted result.
+
+## Distinct Clause
+
+- By default, the `SELECT` statement returns all rows that match the query including duplicate rows, but sometimes we may want to retrieve only unique rows. This is where the `DISTINCT` clause comes into play.
+- The `DISTINCT` clause is used to eliminate duplicate rows from the result set, returning only unique rows based on the specified columns.
+- Example of using `DISTINCT` clause:
+
+  ```sql
+  SELECT DISTINCT department
+  FROM employees; -- Retrieve unique department names from the employees table
+  ```
+
+  - Returns a list of unique department names without duplicates.
+
+- You can also use `DISTINCT` with multiple columns to get unique combinations of values:
+
+  ```sql
+  SELECT DISTINCT department, job_title
+  FROM employees; -- Retrieve unique combinations of department and job title
+  ```
+
+  - First it will get unique combinations of department and then job title.
