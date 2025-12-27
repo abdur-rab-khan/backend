@@ -18,17 +18,15 @@
 
   1. `FROM`: Specifies the table from which to retrieve the data.
   2. [`DISTINCT`](#distinct-clause): Used to return only distinct (different) values.
-  3. `WHERE`: Filters the results based on specified conditions.
+  3. [`WHERE`](../05_filtering-data/#using-the-where-clause): Filters the results based on specified conditions.
   4. [`ORDER BY`](#order-by-clause): Sorts the results in ascending or descending order.
-  5. `LIMIT`: Restricts the number of rows returned.
-  6. `OFFSET`: Skips a specified number of rows before starting to return rows.
-  7. `GROUP BY`: Groups rows that have the same values in specified columns into summary rows.
-  8. `HAVING`: Filters groups based on specified conditions.
-  9. `LIMIT` and `OFFSET`: Control the number of rows returned and the starting point for the results.
-  10. `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`: Combine rows from two or more tables based on a related column between them.
-  11. `UNION`, `INTERSECT`, `EXCEPT`: Combine results from multiple `SELECT` statements.
-  12. `SUBQUERIES`: Nested queries that provide results to the outer query.
-  13. `RETURNING`: Returns values from rows that were modified by an `INSERT`, `UPDATE`, or `DELETE` statement.
+  5. `GROUP BY`: Groups rows that have the same values in specified columns into summary rows.
+  6. `HAVING`: Filters groups based on specified conditions.
+  7. [`LIMIT` and `OFFSET`](../05_filtering-data/#using-limitoffset-clause): Control the number of rows returned and the starting point for the results.
+  8. `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`: Combine rows from two or more tables based on a related column between them.
+  9. `UNION`, `INTERSECT`, `EXCEPT`: Combine results from multiple `SELECT` statements.
+  10. `SUBQUERIES`: Nested queries that provide results to the outer query.
+  11. `RETURNING`: Returns values from rows that were modified by an `INSERT`, `UPDATE`, or `DELETE` statement.
 
 ### Example
 
