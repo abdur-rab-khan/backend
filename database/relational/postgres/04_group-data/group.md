@@ -8,6 +8,9 @@
   - [Example](#example)
   - [Having Clause](#having-clause)
   - [Grouping Sets, Rollup, and Cube](#grouping-sets-rollup-and-cube)
+    - [1. GROUPING SETS](#1-grouping-sets)
+  - [2. CUBE](#2-cube)
+  - [3. ROLLUP](#3-rollup)
 
 ## Group by Clause
 
@@ -97,3 +100,155 @@ GROUP BY column1;
 - Note: We can't use the column aliases defined in the `SELECT` clause, because `HAVING` is evaluated before `SELECT` in the SQL order of operations.
 
 ## Grouping Sets, Rollup, and Cube
+
+### 1. GROUPING SETS
+
+- Grouping Sets allow us to define multiple grouping queries in a single `GROUP BY` clause. This is useful when we want to generate multiple levels of aggregation in one query.
+- `UNION ALL` can be used to combine the results of multiple `GROUP BY` queries, but `GROUPING SETS` provides a more concise way to achieve the same result.
+
+- Example: Using `GROUPING SETS`
+
+  ```sql
+    SELECT
+      brand,
+      segment,
+      SUM(sales) AS total_sales
+    FROM
+      sales_data
+    GROUP BY
+      GROUPING SETS (
+        (brand, segment),
+        (brand),
+        (segment),
+        ()
+      );
+  ```
+
+  - `GROUPING SETS` in this example generates aggregations for:
+
+    - Each combination of `brand` and `segment`
+    - Each `brand` alone
+    - Each `segment` alone
+    - A grand total (no grouping columns)
+
+  - The result will look something like this:
+
+    | brand | segment | quantity |
+    | :---- | :------ | :------- |
+    | XYZ   | Basic   | 300      |
+    | ABC   | Premium | 100      |
+    | ABC   | Basic   | 200      |
+    | XYZ   | Premium | 100      |
+    | ABC   | `NULL`  | 300      |
+    | XYZ   | `NULL`  | 400      |
+
+- `GROUPING` Function is used to identify whether a column in the result set is aggregated or not. It returns `1` if the column is aggregated (i.e., it is part of a higher-level aggregation) and `0` if it is not.
+
+  ```sql
+    SELECT
+      brand,
+      segment,
+      SUM(sales) AS total_sales,
+      GROUPING(brand) AS is_brand_aggregated,
+      GROUPING(segment) AS is_segment_aggregated
+    FROM
+      sales_data
+    GROUP BY
+      GROUPING SETS (
+        (brand, segment),
+        (brand),
+        (segment),
+        ()
+      );
+  ```
+
+  - In this example, the `GROUPING` function helps to identify which rows correspond to aggregated data for `brand` and `segment`.
+
+  - The result will look something like this:
+
+    | brand  | segment | total_sales | is_brand_aggregated | is_segment_aggregated |
+    | :----- | :------ | :---------- | :------------------ | :-------------------- |
+    | XYZ    | Basic   | 300         | 0                   | 0                     |
+    | ABC    | Premium | 100         | 0                   | 0                     |
+    | ABC    | Basic   | 200         | 0                   | 0                     |
+    | XYZ    | Premium | 100         | 0                   | 0                     |
+    | ABC    | `NULL`  | 300         | 0                   | 1                     |
+    | XYZ    | `NULL`  | 400         | 0                   | 1                     |
+    | `NULL` | `NULL`  | 700         | 1                   | 1                     |
+
+## 2. CUBE
+
+- The `CUBE` operator is used to generate all possible combinations of aggregations for the specified columns and add it into the `GROUPING SETS`.
+- It is particularly useful for generating multi-dimensional reports, as it provides a way to see data from various perspectives.
+
+  - Example: Using `CUBE`
+
+    ```sql
+    GROUP BY
+      CUBE (brand, segment);
+
+    -- It will generate the same result as:
+    <!--
+    |
+    |
+    |
+    ↓
+    -->
+    GROUP BY
+      GROUPING SETS (
+        (brand, segment),
+        (brand),
+        (segment),
+        ()
+      );
+    ```
+
+## 3. ROLLUP
+
+- Unlike `CUBE`, which generates all possible combinations, the `ROLLUP` operator creates a hierarchical aggregation. It is used to generate subtotals that roll up from the most detailed level to a grand total.
+- This is particularly useful for generating reports that require subtotals at various levels of a hierarchy.
+
+  - Example: Using `ROLLUP`
+
+    ```sql
+    GROUP BY
+      ROLLUP (brand, segment);
+
+    -- It will generate the same result as:
+    <!--
+    |
+    |
+    |
+    ↓
+    -->
+    GROUP BY
+      GROUPING SETS (
+        (brand, segment),
+        (brand),
+        ()
+      );
+    ```
+
+  - Example: Using `ROLLUP` to generate count based on year > month > day
+
+    ```sql
+    SELECT
+      EXTRACT(YEAR FROM rental_date) AS rental_year,
+      EXTRACT(MONTH FROM rental_date) AS rental_month,
+      EXTRACT(DAY FROM rental_date) AS rental_day,
+      COUNT(*) AS rental_count
+    FROM
+      rentals
+    GROUP BY
+      ROLLUP (
+        EXTRACT(YEAR FROM rental_date),
+        EXTRACT(MONTH FROM rental_date),
+        EXTRACT(DAY FROM rental_date)
+      );
+    ORDER BY
+      rental_year,
+      rental_month,
+      rental_day;
+    ```
+
+    - This query will provide a count of orders at each level: daily, monthly, yearly, and a grand total.

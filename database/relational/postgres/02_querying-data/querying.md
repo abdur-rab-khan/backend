@@ -20,8 +20,8 @@
   2. [`DISTINCT`](#distinct-clause): Used to return only distinct (different) values.
   3. [`WHERE`](../05_filtering-data/#using-the-where-clause): Filters the results based on specified conditions.
   4. [`ORDER BY`](#order-by-clause): Sorts the results in ascending or descending order.
-  5. `GROUP BY`: Groups rows that have the same values in specified columns into summary rows.
-  6. `HAVING`: Filters groups based on specified conditions.
+  5. [`GROUP BY`](../04_group-data/group.md/#group-by-clause): Groups rows that have the same values in specified columns into summary rows.
+  6. [`HAVING`](../04_group-data/group.md/#having-clause): Filters groups based on specified conditions.
   7. [`LIMIT` and `OFFSET`](../05_filtering-data/#using-limitoffset-clause): Control the number of rows returned and the starting point for the results.
   8. `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`: Combine rows from two or more tables based on a related column between them.
   9. `UNION`, `INTERSECT`, `EXCEPT`: Combine results from multiple `SELECT` statements.
