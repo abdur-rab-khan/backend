@@ -18,7 +18,7 @@
 
   1. `FROM`: Specifies the table from which to retrieve the data.
   2. [`DISTINCT`](#distinct-clause): Used to return only distinct (different) values.
-  3. [`WHERE`](../05_filtering-data/#using-the-where-clause): Filters the results based on specified conditions.
+  3. [`WHERE`](../05_filtering-data/filter.md#using-the-where-clause): Filters the results based on specified conditions.
   4. [`ORDER BY`](#order-by-clause): Sorts the results in ascending or descending order.
   5. [`GROUP BY`](../04_group-data/group.md/#group-by-clause): Groups rows that have the same values in specified columns into summary rows.
   6. [`HAVING`](../04_group-data/group.md/#having-clause): Filters groups based on specified conditions.

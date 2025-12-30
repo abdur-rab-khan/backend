@@ -2,6 +2,18 @@
 
 > Managing tables is a fundamental aspect of working with relational databases. In PostgreSQL, you can **create**, **modify**, and **delete** tables using SQL commands. This section covers the essential operations for managing tables.
 
+- [Managing Tables in PostgreSQL](#managing-tables-in-postgresql)
+  - [Creating Tables](#creating-tables)
+    - [Example of Creating a Table](#example-of-creating-a-table)
+  - [Altering Tables](#altering-tables)
+  - [Truncating Tables](#truncating-tables)
+  - [Identity Column](#identity-column)
+    - [Example of Creating a Table with Identity Column](#example-of-creating-a-table-with-identity-column)
+  - [Temporary Tables](#temporary-tables)
+    - [Example of Creating a Temporary Table](#example-of-creating-a-temporary-table)
+  - [Generated Columns](#generated-columns)
+  - [Example of Creating a Table with Generated Column](#example-of-creating-a-table-with-generated-column)
+
 ## Creating Tables
 
 - Creating a table in PostgreSQL is done using the `CREATE TABLE` statement, that defines the table structure, including columns and their data types with optional constraints.

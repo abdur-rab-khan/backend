@@ -9,7 +9,6 @@
   - [Character Types: CHAR, VARCHAR, TEXT](#character-types-char-varchar-text)
   - [Array Types](#array-types)
     - [Accessing All Elements](#accessing-all-elements)
-    - [Getting Array Length](#getting-array-length)
     - [Updating Array Elements](#updating-array-elements)
     - [Search Condition with ANY and ALL](#search-condition-with-any-and-all)
   - [Enum Types](#enum-types)
@@ -103,7 +102,7 @@
   | `TEXT`       | Variable-length character string (unlimited)    | 1 byte + actual length | `COMMENTS TEXT`            |
 
 - `CHAR(n)` is used when the length of the string is known and fixed. It pads the string with spaces if it is shorter than n.
-- `VARCHAR(n)` is used when the length of the string can vary but has a maximum limit of n characters.
+- `VARCHAR(n)` is used when the length of the string can vary but has a maximum limit of n characters, it you does not define a length limit it behaves like `TEXT`.
 - `TEXT` is used for storing large amounts of text without a specific length limit.
 
 - Here is an example of how to create a table with different character data types in PostgreSQL:
@@ -128,6 +127,32 @@
 - PostgreSQL supports array data types, allowing you to store multiple values in a single column.
 - Every data types in PostgresSQL have their array equivalent by appending `[]` to the data type, for example `INTEGER[]`, `TEXT[]`, `BOOLEAN[]`, etc.
 - Array can also be used with custom composite types, allowing you to create arrays of user-defined types.
+- PostgreSQL have various [functions](../10_aggregate-function) and [operators](../11_operators) to work with array data types.
+
+  - Important array functions:
+
+    | Function          | Description                              | Example                                                  |
+    | ----------------- | ---------------------------------------- | -------------------------------------------------------- |
+    | `array_length`    | Get the length of an array               | `array_length(grades, 1)` -> 1 specifies about dimension |
+    | `unnest`          | Expand an array to a set of rows         | `unnest(grades)`                                         |
+    | `array_append`    | Append an element to the end of an array | `array_append(grades, 95)`                               |
+    | `array_prepend`   | Prepend an element to the beginning      | `array_prepend(85, grades)`                              |
+    | `array_cat`       | Concatenate two arrays                   | `array_cat(array1, array2)`                              |
+    | `array_remove`    | Remove all occurrences of an element     | `array_remove(grades, 80)`                               |
+    | `array_replace`   | Replace all occurrences of an element    | `array_replace(grades, 70, 75)`                          |
+    | `array_position`  | Get the index of the first occurrence    | `array_position(grades, 90)`                             |
+    | `array_to_string` | Convert an array to a string             | `array_to_string(grades, ', ')`                          |
+
+  - Important array operators:
+
+    | Operator | Description                   | Example                      |
+    | -------- | ----------------------------- | ---------------------------- |
+    | `@>`     | Contains                      | `grades @> ARRAY[90]`        |
+    | `<@`     | Is contained by               | `ARRAY[85, 90] <@ grades`    |
+    | `&&`     | Overlaps                      | `grades && ARRAY[70, 80]`    |
+    | `\|\|`   | Concatenate                   | `grades \|\| ARRAY[95, 100]` |
+    | `[]`     | Access array element by index | `grades[1]`                  |
+
 - Here is an example of how to create a table with array data types in PostgreSQL:
 
   ```sql
@@ -171,17 +196,6 @@
 
   - This query retrieves each grade for every student as separate rows.
   - The `unnest` function expands an array to a set of rows, allowing you to work with individual elements of the array.
-
-### Getting Array Length
-
-- You can get the length of an array using the `array_length` function:
-
-  ```sql
-  SELECT name, array_length(grades, 1) AS number_of_grades
-  FROM students;
-  ```
-
-  - This query retrieves the number of grades for each student from the `grades` array. The second argument `1` specifies that we want the length of the first dimension of the array.
 
 ### Updating Array Elements
 
