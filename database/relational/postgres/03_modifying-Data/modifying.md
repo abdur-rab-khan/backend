@@ -446,3 +446,26 @@
         VALUES
             (s.id, s.first_name, s.last_name, s.salary);
   ```
+
+- Example: Let's use conditionals on USING statement for more advanced merging.
+
+  ```sql
+    MERGE INTO
+        employees AS e
+    USING
+        (SELECT * FROM staging_employees WHERE hire_date > '2023-01-01') AS s
+    ON
+        e.id = s.id
+    WHEN MATCHED THEN
+        UPDATE SET
+            e.first_name = s.first_name,
+            e.last_name = s.last_name,
+            e.salary = s.salary
+    WHEN NOT MATCHED THEN
+        INSERT
+            (id, first_name, last_name, salary)
+        VALUES
+            (s.id, s.first_name, s.last_name, s.salary);
+  ```
+
+  - This command merges records from the `staging_employees` table into the `employees` table, but only for those employees hired after January 1, 2023. If a matching `id` is found, it updates the employee's details; if not, it inserts a new record.
