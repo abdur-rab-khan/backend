@@ -1,0 +1,98 @@
+TRUNCATE students CASCADE;
+TRUNCATE hobbies CASCADE;
+TRUNCATE result CASCADE;
+TRUNCATE user_result CASCADE;
+
+INSERT INTO students(student_id, first_name, last_name, age, enrollment_date, address) VALUES
+    (1, 'Alice', 'Parker', 21, '2023-09-01', ROW('151 Main ST', 'Springfield', 'IL', '62565')),
+    (2, 'Bob', 'Smith', 22, '2023-09-01', ROW('456 Oak Ave', 'Chicago', 'IL', '60616')),
+    (3, 'Charlie', 'Brown', 20, '2024-01-15', ROW('789 Pine Ln', 'Naperville', 'IL', '60540')),
+    (4, 'Diana', 'Prince', 23, '2022-08-20', ROW('321 Maple Dr', 'Evanston', 'IL', '60201')),
+    (5, 'Evan', 'Wright', 21, '2023-09-01', ROW('654 Cedar Ct', 'Peoria', 'IL', '61614')),
+    (6, 'Fiona', 'Gallagher', 22, '2023-09-01', ROW('987 Birch Blvd', 'Rockford', 'IL', '61107')),
+    (7, 'George', 'Miller', 24, '2021-08-25', ROW('147 Elm St', 'Champaign', 'IL', '61820')),
+    (8, 'Hannah', 'Baker', 19, '2024-01-15', ROW('258 Spruce Way', 'Bloomington', 'IL', '61704')),
+    (9, 'Ian', 'Malcolm', 25, '2020-09-05', ROW('369 Willow Rd', 'Decatur', 'IL', '62521')),
+    (10, 'Julia', 'Roberts', 21, '2023-09-01', ROW('741 Aspen Pl', 'Aurora', 'IL', '60506')),
+    (11, 'Kevin', 'Hart', 22, '2022-08-20', ROW('852 Poplar Dr', 'Joliet', 'IL', '60435')),
+    (12, 'Laura', 'Croft', 20, '2024-01-15', ROW('963 Redwood Ave', 'Elgin', 'IL', '60120')),
+    (13, 'Mike', 'Ross', 23, '2021-08-25', ROW('159 Sequoia St', 'Waukegan', 'IL', '60085')),
+    (14, 'Nina', 'Simone', 21, '2023-09-01', ROW('357 Cypress Ln', 'Cicero', 'IL', '60804')),
+    (15, 'Oscar', 'Wilde', 24, '2020-09-05', ROW('753 Magnolia Blvd', 'Arlington Heights', 'IL', '60005')),
+    (16, 'Paula', 'Abdul', 22, '2022-08-20', ROW('951 Sycamore Ct', 'Schaumburg', 'IL', '60193')),
+    (17, 'Quinn', 'Fabray', 19, '2024-01-15', ROW('357 Hawthorn Way', 'Bolingbrook', 'IL', '60440')),
+    (18, 'Rachel', 'Green', 21, '2023-09-01', ROW('159 Juniper Rd', 'Palatine', 'IL', '60067')),
+    (19, 'Steve', 'Rogers', 25, '2019-09-10', ROW('753 Dogwood Pl', 'Skokie', 'IL', '60077')),
+    (20, 'Tina', 'Fey', 22, '2022-08-20', ROW('852 Alder Dr', 'Des Plaines', 'IL', '60016')),
+    (21, 'Ursula', 'Buffay', 23, '2021-08-25', ROW('963 Beech Ave', 'Orland Park', 'IL', '60462'));
+
+INSERT INTO result(result_id, date, semester, marks) VALUES
+    (1, '2023-01-01', 'Sem 1', '{"English": 89, "Science": 57, "Maths": 70, "History": 40}'),
+    (2, '2023-01-01', 'Sem 1', '{"English": 75, "Science": 82, "Maths": 65, "History": 78}'),
+    (3, '2024-01-01', 'Sem 1', '{"English": 88, "Science": 90, "Maths": 92, "History": 85}'),
+    (4, '2022-01-01', 'Sem 2', '{"English": 60, "Science": 70, "Maths": 55, "History": 65}'),
+    (5, '2023-01-01', 'Sem 1', '{"English": 82, "Science": 78, "Maths": 80, "History": 75}'),
+    (6, '2023-01-01', 'Sem 2', '{"English": 91, "Science": 85, "Maths": 88, "History": 90}'),
+    (7, '2021-01-01', 'Sem 1', '{"English": 70, "Science": 65, "Maths": 72, "History": 68}'),
+    (8, '2024-01-01', 'Sem 1', '{"English": 95, "Science": 92, "Maths": 98, "History": 94}'),
+    (9, '2020-01-01', 'Sem 2', '{"English": 55, "Science": 60, "Maths": 58, "History": 52}'),
+    (10, '2023-01-01', 'Sem 1', '{"English": 85, "Science": 80, "Maths": 82, "History": 88}'),
+    (11, '2022-01-01', 'Sem 1', '{"English": 78, "Science": 75, "Maths": 70, "History": 72}'),
+    (12, '2024-01-01', 'Sem 1', '{"English": 90, "Science": 88, "Maths": 95, "History": 92}'),
+    (13, '2021-01-01', 'Sem 2', '{"English": 65, "Science": 70, "Maths": 68, "History": 62}'),
+    (14, '2023-01-01', 'Sem 1', '{"English": 80, "Science": 85, "Maths": 78, "History": 82}'),
+    (15, '2020-01-01', 'Sem 1', '{"English": 72, "Science": 68, "Maths": 75, "History": 70}'),
+    (16, '2022-01-01', 'Sem 2', '{"English": 88, "Science": 92, "Maths": 85, "History": 90}'),
+    (17, '2024-01-01', 'Sem 1', '{"English": 92, "Science": 95, "Maths": 90, "History": 96}'),
+    (18, '2023-01-01', 'Sem 1', '{"English": 75, "Science": 80, "Maths": 72, "History": 78}'),
+    (19, '2019-01-01', 'Sem 2', '{"English": 60, "Science": 65, "Maths": 62, "History": 58}'),
+    (20, '2022-01-01', 'Sem 1', '{"English": 85, "Science": 82, "Maths": 88, "History": 80}'),
+    (21, '2021-01-01', 'Sem 2', '{"English": 78, "Science": 75, "Maths": 80, "History": 72}');
+
+
+INSERT INTO user_result(student_id, result_id) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10),
+    (11, 11),
+    (12, 12),
+    (13, 13),
+    (14, 14),
+    (15, 15),
+    (16, 16),
+    (17, 17),
+    (18, 18),
+    (19, 19),
+    (20, 20),
+    (21, 21);
+
+
+INSERT INTO hobbies(student_id, hobbies) VALUES
+    (1, ARRAY['Watching Movies', 'Gaming', 'Reading']),
+    (2, ARRAY['Hiking', 'Photography', 'Cooking']),
+    (3, ARRAY['Swimming', 'Cycling', 'Running']),
+    (4, ARRAY['Drawing', 'Painting', 'Sculpting']),
+    (5, ARRAY['Playing Guitar', 'Singing', 'Songwriting']),
+    (6, ARRAY['Traveling', 'Blogging', 'Vlogging']),
+    (7, ARRAY['Chess', 'Puzzles', 'Board Games']),
+    (8, ARRAY['Gardening', 'Knitting', 'Sewing']),
+    (9, ARRAY['Fishing', 'Camping', 'Hunting']),
+    (10, ARRAY['Yoga', 'Meditation', 'Pilates']),
+    (11, ARRAY['Coding', 'Robotics', 'Electronics']),
+    (12, ARRAY['Dancing', 'Acting', 'Theater']),
+    (13, ARRAY['Writing', 'Poetry', 'Journaling']),
+    (14, ARRAY['Soccer', 'Basketball', 'Tennis']),
+    (15, ARRAY['Volunteering', 'Community Service', 'Mentoring']),
+    (16, ARRAY['Collecting Stamps', 'Collecting Coins', 'Antiquing']),
+    (17, ARRAY['Bird Watching', 'Astronomy', 'Stargazing']),
+    (18, ARRAY['Baking', 'Cake Decorating', 'Pastry Making']),
+    (19, ARRAY['Woodworking', 'Metalworking', 'Carpentry']),
+    (20, ARRAY['Skiing', 'Snowboarding', 'Ice Skating']),
+    (21, ARRAY['Surfing', 'Scuba Diving', 'Snorkeling']);

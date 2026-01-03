@@ -20,6 +20,17 @@
       "name": "mydb",
       "database": "mydb",
       "username": "postgres"
+    },
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5555,
+      "driver": "PostgreSQL",
+      "name": "Practice",
+      "username": "postgres",
+      "database": "practice",
+      "password": "my-password"
     }
   ],
   "cSpell.words": ["Savepoints"]

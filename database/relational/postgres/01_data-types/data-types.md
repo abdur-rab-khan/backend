@@ -11,6 +11,7 @@
     - [Accessing All Elements](#accessing-all-elements)
     - [Updating Array Elements](#updating-array-elements)
     - [Search Condition with ANY and ALL](#search-condition-with-any-and-all)
+  - [Composite Types](#composite-types)
   - [Enum Types](#enum-types)
     - [Altering Enum Types](#altering-enum-types)
   - [JSON and JSONB Types](#json-and-jsonb-types)
@@ -229,6 +230,48 @@
 
 - **_Note_** that array indexing in PostgreSQL starts at 1, not 0.
 
+## Composite Types
+
+- PostgreSQL allows us to create custom composite types to group multiple fields into a single data type.
+- Composite types are useful when you want to represent complex data structures in your database.
+- Here is an example of how to create and use a composite type in PostgreSQL:
+
+  ```sql
+  -- Create a composite type for address
+  CREATE TYPE address AS (
+      street VARCHAR(100),
+      city VARCHAR(50),
+      state VARCHAR(50),
+      zip_code VARCHAR(10)
+  );
+
+  -- Create a table using the composite type
+  CREATE TABLE customers (
+      customer_id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      home_address address -- Using the custom composite type
+  );
+
+  -- Insert data into the table
+  INSERT INTO customers (name, home_address) VALUES
+  ('Alice', ROW('123 Main St', 'Springfield', 'IL', '62701')),
+  ('Bob', ROW('456 Elm St', 'Shelbyville', 'IL', '62565'));
+
+  -- OR
+  INSERT INTO customers(name, home_address.street, home_address.city, home_address.state, home_address.zip_code) VALUES
+  ('Charlie', '789 Oak St', 'Capital City', 'IL', '62702');
+
+  -- Query the table
+  SELECT customer_id, name,
+         (home_address).street AS street,
+         (home_address).city AS city,
+         (home_address).state AS state,
+         (home_address).zip_code AS zip_code
+  FROM customers
+  WHERE
+    home_address.city = 'Springfield';
+  ```
+
 ## Enum Types
 
 - PostgreSQL allows you to create custom enumerated types (enums) to represent a fixed set of values.
@@ -401,16 +444,16 @@
   );
 
   INSERT INTO employees (first_name, last_name, hire_date) VALUES
-  ('Alice', 'Smith', '2022-01-15'),
-  ('Bob', 'Johnson', '2022-02-20'),
-  ('Charlie', 'Brown', '2022-03-10');
+    ('Alice', 'Smith', '2022-01-15'),
+    ('Bob', 'Johnson', '2022-02-20'),
+    ('Charlie', 'Brown', '2022-03-10');
   ```
 
   - We can use `DEFAULT` keyword to insert the next value from the sequence explicitly:
 
     ```sql
-    INSERT INTO employees (employee_id, first_name, last_name, hire_date)
-    VALUES (DEFAULT, 'David', 'Wilson', '2022-04-05')
+    INSERT INTO employees (employee_id, first_name, last_name, hire_date) VALUES
+      (DEFAULT, 'David', 'Wilson', '2022-04-05')
     RETURNING employee_id;
     ```
 
@@ -577,6 +620,6 @@
   );
 
   INSERT INTO files (file_name, file_data) VALUES
-  ('example_image.png', decode('89504E470D0A1A0A0000000D49484452...', 'hex')),
-  ('document.pdf', decode('255044462D312E350D0A25E2E3CFD30...', 'hex'));
+    ('example_image.png', decode('89504E470D0A1A0A0000000D49484452...', 'hex')),
+    ('document.pdf', decode('255044462D312E350D0A25E2E3CFD30...', 'hex'));
   ```
