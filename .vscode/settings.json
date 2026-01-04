@@ -5,17 +5,6 @@
       "previewLimit": 50,
       "server": "localhost",
       "port": 5555,
-      "askForPassword": true,
-      "driver": "PostgreSQL",
-      "name": "postgres",
-      "username": "postgres",
-      "database": "dvdrental"
-    },
-    {
-      "ssh": "Disabled",
-      "previewLimit": 50,
-      "server": "localhost",
-      "port": 5555,
       "driver": "PostgreSQL",
       "name": "mydb",
       "database": "mydb",
@@ -30,6 +19,17 @@
       "name": "Practice",
       "username": "postgres",
       "database": "practice",
+      "password": "my-password"
+    },
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5555,
+      "driver": "PostgreSQL",
+      "name": "postgres",
+      "username": "postgres",
+      "database": "dvdrental",
       "password": "my-password"
     }
   ],

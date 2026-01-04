@@ -105,3 +105,54 @@
   - In this function, if the second update fails, we roll back to the savepoint `sp1`, undoing only the changes made after that point, while keeping the first update intact. Finally, we commit the transaction.
 
 - Note: In real-world applications, it's essential to handle transactions carefully to avoid issues like deadlocks and ensure optimal performance.
+
+## Adding Locks in Transaction
+
+- In postgres, Lock is useful to maintain data integrity during concurrent transactions, their are different types of locks available in postgres:
+
+  - **Standard Operations (Implicit Locks)**: These are acquired automatically by standard SQL commands.
+
+    - **`ACCESS SHARE` (Reading)**: Acquired by `SELECT`. It allows others to read and write to the table but prevents structural changes (like dropping the table).
+    - **`ROW EXCLUSIVE` (Writing)**: Acquired by `UPDATE`, `DELETE`, and `INSERT`. It allows others to read the table but locks the specific rows being modified.
+
+  - **Explicit Row Control**:
+
+    - **`FOR UPDATE`**: A row-level lock used in `SELECT` statements. It locks the selected rows as if they were being updated, preventing others from modifying them until the transaction ends.
+    - **`ROW SHARE`**: Similar to `FOR UPDATE`, acquired by `SELECT FOR SHARE`.
+    - Keywords:
+      - `FOR UPDATE NOWAIT`: It prevents waiting for the lock, raising an error if the row is already locked.
+      -
+
+  - **Administrative & Structure Changes**: These locks are generally more restrictive.
+    - **`ACCESS EXCLUSIVE` (Full Block)**: Acquired by `ALTER TABLE`, `DROP TABLE`, `TRUNCATE`, or `VACUUM FULL`. This is the strictest lock; it blocks **all** other access (both reads and writes) to the table.
+    - **Maintenance Locks**:
+      - **`SHARE UPDATE EXCLUSIVE`**: Acquired by `VACUUM`, `ANALYZE`, etc.
+      - **`SHARE`**: Acquired by `CREATE INDEX`.
+
+- Example: Using `FOR UPDATE` lock in a transaction:
+
+  ```sql
+  BEGIN;  -- Start a new transaction
+
+  SELECT * FROM accounts WHERE account_id = 1 FOR UPDATE;  -- Lock the row for update
+  UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+
+  COMMIT;  -- Commit the transaction
+  ```
+
+  - In this example, the `FOR UPDATE` clause locks the selected row, preventing other transactions from modifying or deleting it until the current transaction is completed.
+
+- Example: Using explicit table lock in a transaction:
+
+  ```sql
+  BEGIN;  -- Start a new transaction
+
+  LOCK TABLE accounts IN EXCLUSIVE MODE;  -- Lock the entire table
+  UPDATE accounts SET balance = balance - 100 WHERE account_id = 1;
+  UPDATE accounts SET balance = balance + 100 WHERE account_id = 2;
+
+  COMMIT;  -- Commit the transaction
+  ```
+
+  - In this example, the `LOCK TABLE` command acquires an exclusive lock on the `accounts` table, preventing other transactions from reading or writing to it until the current transaction is completed.
+  - Note: Use table locks judiciously, as they can lead to contention and reduced concurrency in a multi-user environment.
