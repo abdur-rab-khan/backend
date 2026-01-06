@@ -59,7 +59,7 @@ SELECT
         )
     )
 FROM
-    person
+    person;
 
 -- "jsonb_path_query_first(column_name --> jsonb_data, 'query expression')": It's similar to "jsonb_path_query" but it always return first matched result.
 
@@ -73,7 +73,36 @@ FROM
 
 SELECT
     jsonb_build_object(
-        'first_pet', jsonb_extract_path(info, 'pets')
+        'first_pet', jsonb_extract_path(info, 'pets'),
+        'pet_with_name_max', jsonb_path_query(info, '$.pets[*] ? (@.name == "Max")')
     )
 FROM
     person;
+
+
+/* 
+<==============================> MODIFY JSON DATA <==============================> 
+
+Result-> [{marks: {...sub_marks}}]
+
+*/
+
+-- "jsonb_insert(target, path, new_value)": It allows to insert/modify existing properties, we can only insert/modify single key/value pair at a time.
+
+SELECT
+    jsonb_set(marks, '{semester}', to_jsonb(semester)) -- It will add new field semester on marks
+FROM
+    result;
+
+-- OR NESTED KEY/VALUE PAIR: {semester, year} -> {semester: {year: 2025}}, to_jsonb(2025)
+-- FOR ARRAY: {}
+
+
+-- <==============================> Aggregating JSON DATA <==============================>
+
+-- Aggregating function is a function that collect data from all rows into single json array, all the result push in the array.
+
+SELECT
+    jsonb_agg(jsonb_build_object('semester', semester))               
+FROM
+    result;
