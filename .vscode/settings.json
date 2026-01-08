@@ -27,7 +27,7 @@
       "server": "localhost",
       "port": 5555,
       "driver": "PostgreSQL",
-      "name": "postgres",
+      "name": "dvdrental",
       "username": "postgres",
       "database": "dvdrental",
       "password": "my-password"
