@@ -65,3 +65,20 @@ EXCEPTION
         RAISE NOTICE 'An error occurred: %', SQLERRM;
 END;
 $$;
+
+
+-- Example: Handling using ERRCODE
+DO $$
+DECLARE
+    value INTEGER := 300;
+BEGIN
+    IF value > 255 THEN
+        RAISE EXCEPTION 'Value % exceeds the maximum allowed limit of 255.', value
+            USING ERRCODE = '22003'; -- Numeric value out of range
+    END IF;
+    RAISE NOTICE 'Value: %', value;
+EXCEPTION
+    WHEN SQLSTATE '22003' THEN
+        RAISE NOTICE 'Error: Numeric value out of range - %', SQLERRM;
+    WHEN OTHERS THEN
+        RAISE NOTICE 'An unexpected error occurred: %', SQLERRM;
