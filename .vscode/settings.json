@@ -5,11 +5,10 @@
       "previewLimit": 50,
       "server": "localhost",
       "port": 5555,
-      "askForPassword": true,
       "driver": "PostgreSQL",
-      "name": "postgres",
-      "username": "postgres",
-      "database": "dvdrental"
+      "name": "mydb",
+      "database": "mydb",
+      "username": "postgres"
     },
     {
       "ssh": "Disabled",
@@ -17,10 +16,22 @@
       "server": "localhost",
       "port": 5555,
       "driver": "PostgreSQL",
-      "name": "mydb",
-      "database": "mydb",
-      "username": "postgres"
+      "name": "Practice",
+      "username": "postgres",
+      "database": "practice",
+      "password": "my-password"
+    },
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5555,
+      "driver": "PostgreSQL",
+      "name": "dvdrental",
+      "username": "postgres",
+      "database": "dvdrental",
+      "password": "my-password"
     }
   ],
-  "cSpell.words": ["Savepoints"]
+  "cSpell.words": ["Savepoints", "serveral"]
 }

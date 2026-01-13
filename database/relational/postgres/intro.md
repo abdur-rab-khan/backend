@@ -345,7 +345,7 @@
 
 - Older database systems often use locking mechanisms when multiple users try to access the same data simultaneously. This can lead to performance bottlenecks and reduced concurrency.
 - Postgres uses Multi-Version Concurrency Control (MVCC) to handle concurrent transactions more efficiently. MVCC allows multiple versions of a data item to exist simultaneously, enabling readers to access a consistent snapshot of the data without being blocked by writers.
-- With MVCC, when a transaction modifies data, it creates a new version of that data item rather than overwriting the existing version. This allows other transactions to continue reading the old version until they are ready to see the new version.
+- With MVCC, when a transaction modifies data, it creates a new version (snapshot) of that data item rather than overwriting the existing version. This allows other transactions to continue reading the old version until they are ready to see the new version.
 - Example scenario:
   - Transaction A starts and reads a row from a table.
   - Transaction B starts and updates the same row, creating a new version.
