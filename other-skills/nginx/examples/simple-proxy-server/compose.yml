@@ -1,0 +1,92 @@
+services:
+  # ngnix:
+  #   image: nginx:1.29.4-alpine3.23-perl
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - "./ngnix.conf:/etc/nginx/nginx.conf"
+  #   depends_on:
+  #     api-1:
+  #       condition: service_healthy
+  #     api-2:
+  #       condition: service_healthy
+  #     api-3:
+  #       condition: service_healthy
+  #     api-4:
+  #       condition: service_healthy
+
+  api-1:
+    build:
+      context: "./api"
+    environment:
+      - SERVER_NAME='Sever 1'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api-2:
+    build:
+      context: "./api"
+    environment:
+      - SERVER_NAME='Sever 2'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api-3:
+    build:
+      context: "./api"
+    environment:
+      - SERVER_NAME='Sever 3'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api-4:
+    build:
+      context: "./api"
+    environment:
+      - SERVER_NAME='Sever 4'
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5

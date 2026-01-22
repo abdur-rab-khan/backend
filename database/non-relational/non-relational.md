@@ -85,3 +85,6 @@
     - Data integrity and consistency are top priorities.
     - The schema is well-defined and unlikely to change frequently.
 - In some cases, a hybrid approach may be beneficial, where both relational and non-relational
+
+- **MONGODB URL FORMAT**
+  - mongodb://[username:password@]host1[:port1],...hostN[:portN]][/[defaultauthdb][?options]]
