@@ -63,6 +63,76 @@
 |      }}                                                                                                                       |                                   
 |                                                                                                                               |
 +------------------------------------------------------------+ END +------------------------------------------------------------+
+
+
++-----------------------------------------------------+ IMPORTANT TO NOTE +-----------------------------------------------------+
+|                                                                                                                               |
+| ⭐ Operators in MongoDB works in two contexts.                                                                                |
+|                                                                                                                               |
+|    1️⃣. Query Context: Used to filter documents based on specified criteria.                                                   |
+|          🔸 find()                                                                                                            |                               
+|          🔸 $match                                                                                                            |                               
+|                                                                                                                               |
+|    ♦️ Example:                                                                                                                |
+|         db.collection.find({ age: { $gt: 25 } }); // Query Context                                                            |
+|         db.collection.aggregate([                                                                                             |
+|           { $match: { age: { $gt: 25 } } } // Query Context                                                                   |
+|         ]);                                                                                                                   |
+|                                                                                                                               |
+|    2️⃣ Expression Context: Used to compute values or perform operations on fields within documents.                            |
+|        🔸 Aggregation Pipeline Stages:                                                                                        |                      
+|          🔹 $project                                                                                                          |
+|          🔹 $group                                                                                                            |
+|          🔹 $addFields                                                                                                        |
+|          🔹 $set                                                                                                              |
+|          🔹 $cond                                                                                                             |
+|          🔹 $expr                                                                                                             |
+|                                                                                                                               |
+|    ♦️ Example:                                                                                                                |
+|         db.collection.aggregate([                                                                                             |
+|           { $project: { isAdult: { $gt: ["$age", 18] } } } // Expression Context                                              |
+|         ]);                                                                                                                   |
+|        db.collection.aggregate([                                                                                              |
+|           { $addFields: { totalPrice: { $multiply: ["$price", "$quantity"] } } } // Expression Context                        |
+|         ]);                                                                                                                   |
+|        db.collection.aggregate([                                                                                              |
+|           { $match: { $expr: { $gt: ["$spent", "$budget"] } } } // Expression Context                                         |
+|        ]);                                                                                                                    |
+|        db.collection.aggregate([                                                                                              |
+|           { $match: {                                                                                                         |                            
+|               $and: [                                                                                                         |
+|                   { $expr: { $gt: ["$age", 18] } },                                                                           |
+|                   { $expr: { $lt: ["$age", 30] } }                                                                            |
+|               ]                                                                                                               |
+|           } // Expression Context                                                                                             |
+|         ]);                                                                                                                   |
+|                                                                                                                               |
+| ⭐ In Mongodb, there is two level of operators:                                                                               |
+|                                                                                                                               |
+|   1️⃣. Top-Level Operators: These operators are used directly within the query document to filter documents based on specified |
+|      criteria. Examples include $and, $or, $match, $group                                                                     |
+|                                                                                                                               |
+|   ♦️ Example:                                                                                                                 |
+|     db.collection.find({ $and: [ { age: { $gt: 25 } }, { status: "A" } ] }); // Top-Level Operator                            | 
+|     db.collection.aggregate([                                                                                                 |
+|       { $match: { status: "A" } }, // Top-Level Operator                                                                      |
+|       { $group: { _id: "$cust_id", total: { $sum: "$amount" } } } // $group Top-Level Operator                                |  
+|     ]);                                                                                                                       |
+|                                                                                                                               |
+|   2️⃣. Field-Level Operators: These operators are used within field to compute values or perform operations on fields.         |
+|       Examples include $gt, $sum, $avg, $cond, $expr                                                                          |
+|                                                                                                                               |
+|   ♦️ Example:                                                                                                                 |
+|     db.collection.find({ age: { $gt: 25 } }); // Expression-Level Operator                                                    |
+|     db.collection.aggregate([                                                                                                 |
+|       { $project: { isAdult: { $gt: ["$age", 18] } } }, // Expression-Level Operator + Expression Context                     |
+|       { $group: { _id: "$cust_id", total: { $sum: "$amount" } } } // $sum Expression-Level Operator                           |
+|     ]);                                                                                                                       |
+|                                                                                                                               |
+|                                                                                                                               |
+|                                                                                                                               |
++------------------------------------------------------------+ END +------------------------------------------------------------+
+
 */
 use("mongodb-tutorial");
 

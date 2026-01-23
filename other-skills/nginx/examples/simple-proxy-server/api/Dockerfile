@@ -1,15 +1,14 @@
 FROM node:alpine
 
 RUN apk add --no-cache wget
+RUN npm install -g pnpm 
 
 WORKDIR /api
 
-COPY ./package.json ./pnpm-lock.yaml ./
+COPY ./package.json ./ 
 
-RUN npm install -g pnpm && pnpm install
+RUN pnpm install
 
+COPY ./index.js ./ 
 
-COPY . .
-
-
-CMD [ "node", "./index.js" ]
+CMD ["pnpm", "dev"]
