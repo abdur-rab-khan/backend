@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Image</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #181a1b;
+        color: #f1f1f1;
+        font-family: "Roboto", Arial, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        margin-top: 40px;
+        background: #23272a;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        padding: 32px 24px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      img {
+        max-width: 80vw;
+        max-height: 70vh;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+        margin-bottom: 24px;
+      }
+      .back-btn {
+        display: inline-block;
+        padding: 10px 24px;
+        background: #282c34;
+        color: #f1f1f1;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.2s;
+        cursor: pointer;
+      }
+      .back-btn:hover {
+        background: #3a3f47;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-btn">← Back to Gallery</a>
+      <img id="full-image" src="" alt="Full Image" />
+    </div>
+    <script>
+      // Get image filename from query string
+      const params = new URLSearchParams(window.location.search);
+      const img = params.get("img");
+      if (img) {
+        document.getElementById("full-image").src = `../images/${img}`;
+        document.getElementById("full-image").alt = img;
+      } else {
+        document.getElementById("full-image").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
