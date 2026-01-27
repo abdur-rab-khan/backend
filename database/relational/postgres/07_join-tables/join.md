@@ -11,6 +11,7 @@
     - [4. FULL OUTER JOIN Example](#4-full-outer-join-example)
     - [5. NATURAL JOIN Example](#5-natural-join-example)
     - [6. Self JOIN Example](#6-self-join-example)
+    - [7. LATERAL JOIN Example](#7-lateral-join-example)
 
 ## Types of Joins
 
@@ -106,6 +107,18 @@
             table1
         NATURAL JOIN
             table2;
+   ```
+
+8. [LATERAL JOIN](#7-lateral-join-example): A lateral join allows a subquery in the `FROM` clause to reference columns from preceding tables (tables that appear earlier in the `FROM` clause). This is useful for performing operations that depend on values from other tables, means after getting values from left tables, we can use those values in right table subquery to get related data.
+
+   ```sql
+        SELECT
+            a.column_name,
+            b.column_name
+        FROM
+            table1 AS a,
+        JOIN LATERAL
+            (SELECT column_name FROM table2 WHERE table2.common_field = a.common_field) AS b ON true;
    ```
 
 - **NOTE**: Always `TABLE` before the `JOIN` keyword is called the **left table** and the `TABLE` after the `JOIN` keyword is called the **right table**.
@@ -297,3 +310,52 @@
   ```
 
   - In this example, we are selecting the `employee_id`, concatenated `first_name` and `last_name` as `employee_name` from the `employee` table (aliased as `e`) and concatenated `first_name` and `last_name` as `manager_name` from the same `employee` table (aliased as `m`). The self join is performed on the condition that the `manager_id` of the employee matches the `employee_id` of the manager. The results are ordered by the employee ID, and only the top 10 records are returned.
+
+### 7. LATERAL JOIN Example
+
+- Example: Consider two tables, `customer` and `payment` and we want to retrieve a list of customers along with their most recent payment details.
+
+  ```sql
+    SELECT
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS full_name,
+        p.amount,
+        p.payment_date
+    FROM
+        customer AS c,
+    JOIN LATERAL
+        (SELECT amount, payment_date
+         FROM payment AS p
+         WHERE p.customer_id = c.customer_id
+         ORDER BY p.payment_date DESC
+         LIMIT 1) AS p ON true
+    ORDER BY
+        c.customer_id
+    LIMIT
+        10;
+  ```
+
+  - In this example, we are selecting the `customer_id`, concatenated `first_name` and `last_name` as `full_name` from the `customer` table (aliased as `c`) and the most recent `amount` and `payment_date` from the `payment` table (aliased as `p`). The lateral join allows the subquery to reference the `customer_id` from the `customer` table to fetch the most recent payment for each customer. The results are ordered by the customer ID, and only the top 10 records are returned.
+
+- Example: Consider two tables, `customer` and `order` and we want to retrieve a list of customers along with all their orders.
+
+  ```sql
+    SELECT
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS full_name,
+        o.order_id,
+        o.order_date
+    FROM
+        customer AS c,
+    JOIN LATERAL
+        (SELECT order_id, order_date
+         FROM order AS o
+         WHERE o.customer_id = c.customer_id
+         ORDER BY o.order_date DESC) AS o ON true
+    ORDER BY
+        c.customer_id, o.order_date DESC
+    LIMIT
+        10;
+  ```
+
+  - In this example, we are selecting the `customer_id`, concatenated `first_name` and `last_name` as `full_name` from the `customer` table (aliased as `c`) and all `order_id` and `order_date` from the `order` table (aliased as `o`). The lateral join allows the subquery to reference the `customer_id` from the `customer` table to fetch all orders for each customer. The results are ordered by the customer ID and order date in descending order, and only the top 10 records are returned.
