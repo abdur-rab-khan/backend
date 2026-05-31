@@ -7,24 +7,12 @@
     "moduleResolution": "nodenext",
     "moduleDetection": "force",
     "allowJs": false,
-    "types": ["node"],
-
-    // Interop & JSON
+    "types": ["node", "bun"],
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": false,
-    "noEmit": true,
-
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
 }
