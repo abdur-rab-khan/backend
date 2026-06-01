@@ -1,5 +1,5 @@
 try {
-  process.loadEnvFile("./.env"); // Came in "node v24" -> Used to load the .env from a particular file.
+  process.loadEnvFile("./.env"); // Added in "node v20 - v21" -> Used to load the .env from a particular file.
 
   // Let's print all .envs, every "environment variable" can be accessed through process.env can gave "environment variable" as object.
   // 👉 It gave all environment variables available into the system and using "dotenv", "loadEnvFile" it combine these with system environment variables.
