@@ -2,6 +2,9 @@
   "name": "node.js",
   "module": "index.ts",
   "private": true,
+  "scripts": {
+    "start": "bun ./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^25.9.1"
@@ -10,6 +13,7 @@
     "typescript": "^6"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2"
   }
 }
