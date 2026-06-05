@@ -10,31 +10,31 @@ const sleep = (time = 1000) =>
  
  📥 Important methods and variables (REQUEST)
     1. Properties
-        1. req.url
-        2. req.method
-        3. req.headers
+        1. req.url                          --> '/path?query=string'
+        2. req.method                       --> 'GET' | 'POST' | 'PUT' | 'DELETE'
+        3. req.headers                      --> '{ "content-type": '' }'
    
     2. Stream Events
-        1. req.on('data', cb)
-        2. req.on('end', cb)
-        2. req.on('error', cb)
-        2. req.pip(dest)
+        1. req.on('data', cb)               --> As we know in node.js body data came into chunks, We'll this from here.
+        2. req.on('end', cb)                --> trigger after receiving all the data's
+        2. req.on('error', cb)              --> connection error
+        2. req.pip(dest)                    --> forward body to another stream
  
  📤 Important methods and variables (RESPONSE)
     1. Properties
-        1. res.statusCode = 200
-        2. res.writeableEnded
-        3. res.finished
+        1. res.statusCode = 200             --> default 200, set before end()
+        2. res.writeableEnded               --> true after end() is called
+        3. res.finished                     --> true after fully flushed
         
     2. Header Methods
-        1. res.setHeader(name, value);
-        2. res.getHeader(name, value);
-        3. res.removeHeader(name)
-        4. res.writeHead(status, {})
+        1. res.setHeader(name, value);      --> set  one header
+        2. res.getHeader(name, value);      --> read a header you set
+        3. res.removeHeader(name)           --> remove a header
+        4. res.writeHead(status, {})        --> set status + all headers at once
  
     3. Body methods
-        1. res.write(chuck) --> Used pass data as a chuck instead of passing everything at once, and it creates "Transfer-Encoding: chunked"
-        2. res.end(data?) --> Used to pass everything at once, and it creates "Content-Length: content_size" header unlike "transform chunked"
+        1. res.write(chuck)                 --> Used pass data as a chuck instead of passing everything at once, and it creates "Transfer-Encoding: chunked"
+        2. res.end(data?)                   --> Used to pass everything at once, and it creates "Content-Length: content_size" header unlike "transform chunked"
 */
 const { listen, addListener, getConnections, close } = http.createServer(
   (req, res) => {
