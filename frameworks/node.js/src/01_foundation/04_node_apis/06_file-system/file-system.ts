@@ -57,3 +57,6 @@ console.log("Playing folder stat is: ", statSync(PLAYING_PATH));
 
 // 👉 existsSync: Returns boolean and It's used to check whether file/folder exists or not, and we can also check recursively.
 console.log("Is playing folder exists or not: ", existsSync(PLAYING_PATH));
+
+// 👉 glob: It's used to find folder/files using ""wild card""
+console.log(globSync(path.resolve(PLAYING_PATH, "./*.json")));
