@@ -2,7 +2,8 @@ import path from "node:path";
 import process from "node:process";
 
 // 👉 Give the current path where the current working directory of node.js process.
-// Unlike __dirname, that gives the current file directory.
+// 👉 Unlike __dirname, that gives the current file directory.
+// 🟡🟡 And "current working directory" is defined by current terminal sessions path, Suppose I'm running "process.ts" from "node.js" (path) the cwd will be "other_path/node.js"
 const currentPath = process.cwd();
 console.log("Current path where I'm is: ", currentPath); // C:\Users\abdur\Developer\Learning\backend-dev\frameworks\node.js
 console.log("src Directory is: ", path.resolve(currentPath, "./src"));

@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { existsSync, mkdirSync, writeFile, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, Mode, writeFile, writeFileSync } from "node:fs";
 import { writeFile as writeFilePromise } from "node:fs/promises";
 
 // 🟡 If no file exists, it will automatically create it and then add data into it, 👉 But the folder should be there.
