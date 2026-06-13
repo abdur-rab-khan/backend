@@ -11,13 +11,29 @@ import { pipeline } from "node:stream/promises";
  */
 
 /*
- * 🟡 Writable Streams are the final destination of streams, within the pipeline they consume data given by "writable" or "transform" streams.
-      🔸  
+ * 🟡 "Readable Stream:"
+ *                      Used to read data from "files", "network request" and send data as a "chunk", and that chunk of data that be pipe to "writableStream" or "transformStream" like "zlib", "createWritableStream"
+ *                      🔶 Important methods provided:
+ *                             1. "on": These are event listeners that call's the callback function when certain event occurs like "data", "end", "error", "close"
+ *                             2. "pause/resume": resume/pause are used to pause/resume the stream flow, Sometime writeStreams are slower than readStream that's why we pause if "writeStream.write("data")" returns false.
+ *                             3. "setEncoding":
+ *
+ * 🟡 "Writable Stream:"
+ *                      Used to write on "files", "network request" data that we got from "readable streams", "transformer" through pipes.
+ *                      🔶 Important methods provided:
+ *                           1. "on": Event listeners that call's the callback function when certain event occurs like "drain (event call when writeStream.write("data") returns false)"
+ *                           2. "write": Used to write data in a chunks, and return boolean if the buffer memory got full.
  */
 
-const readableStream = createReadStream(resolve(__dirname, "./sample.txt"), {
-  encoding: "utf-8",
-});
+const readableStream = createReadStream(
+  resolve(__dirname, "./playing/sample.txt"),
+  {
+    encoding: "utf-8",
+  },
+);
+
+// Can also set option via methods
+readableStream.setEncoding("utf-8");
 
 readableStream
   .on("data", (chunk) => console.log("CHUNKS ARE: ", chunk, "\n\n"))
@@ -42,7 +58,7 @@ class CustomTransformer extends Transform {
 
 const upperCaseTransformer = new CustomTransformer();
 const writableStreams = createWriteStream(
-  resolve(__dirname, "./sample-upper.txt"),
+  resolve(__dirname, "./playing/sample-upper.txt"),
 );
 
 pipeline(readableStream, upperCaseTransformer, writableStreams)

@@ -2,7 +2,12 @@ import gzip from "node:zlib";
 import { resolve } from "node:path";
 import { pipeline } from "node:stream";
 import { createServer } from "node:http";
-import { createReadStream, createWriteStream } from "node:fs";
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+} from "node:fs";
 
 /*
  * 🟡 A Stream in Node.js is a way to handle data "chunk by chunk" instead of loading everything into memory at once.
@@ -34,16 +39,20 @@ import { createReadStream, createWriteStream } from "node:fs";
  *        🔸Examples: zlib.createGzip(), custom text filters.
  */
 const server = createServer((req, res) => {
-  const fileData = createReadStream(resolve(__dirname, "./video.mp4"));
+  if (!existsSync(resolve(__dirname, "./playing"))) {
+    mkdirSync(resolve(__dirname, "./playing"));
+  }
+
+  const fileData = createReadStream(resolve(__dirname, "./playing/video.mp4"));
 
   pipeline(
     fileData,
     gzip.createGzip(),
-    createWriteStream(resolve(__dirname, "./video.mp4.gz")),
+    createWriteStream(resolve(__dirname, "./playing/video.mp4.gz")),
     (err) => {
       if (err) {
         res.statusCode = 500;
-        res.end("Internal Server Error");
+        res.end(`Server Internal Error: ${err?.message ?? ""}`);
       } else {
         res.end("Successfully created the zip file");
       }
