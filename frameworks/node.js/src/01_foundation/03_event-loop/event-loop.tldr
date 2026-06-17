@@ -410,8 +410,8 @@
 			"typeName": "instance_page_state"
 		},
 		{
-			"x": -30,
-			"y": -220,
+			"x": -150,
+			"y": -60,
 			"rotation": 0,
 			"isLocked": false,
 			"opacity": 1,
@@ -424,9 +424,9 @@
 			"typeName": "shape"
 		},
 		{
-			"x": 468.47134968723515,
-			"y": 48.98174995230169,
-			"z": 0.508456368990365,
+			"x": 342.50772975237,
+			"y": 7.368421052631582,
+			"z": 0.5135135135135135,
 			"meta": {},
 			"id": "camera:page:page",
 			"typeName": "camera"
@@ -770,9 +770,9 @@
 			"typeName": "binding"
 		},
 		{
-			"x": 51.747932958270354,
-			"y": 328.1749902347588,
-			"z": 0.5208653241,
+			"x": 951.611103833336,
+			"y": 353.8666039888151,
+			"z": 0.46049065385382193,
 			"meta": {},
 			"id": "camera:page:cgDpIh-ubEuS74IipBK9u",
 			"typeName": "camera"
@@ -3832,15 +3832,11 @@
 		{
 			"followingUserId": null,
 			"opacityForNextShape": 1,
-			"stylesForNextShape": {
-				"tldraw:geo": "rectangle",
-				"tldraw:color": "black",
-				"tldraw:fill": "pattern"
-			},
+			"stylesForNextShape": {},
 			"brush": null,
 			"scribbles": [],
 			"cursor": {
-				"type": "move",
+				"type": "default",
 				"rotation": 0
 			},
 			"isFocusMode": false,

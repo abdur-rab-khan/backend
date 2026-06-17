@@ -14,13 +14,18 @@ app.get("/", (req, res) => {
   //   res.redirect("https://www.google.com");
   //   res.download(path.resolve(__dirname, "../public/cats/1.jpg"));
   //   res.json({ message: "Thanks for coming to localhost:4000 route" });
+
+  // --> Send any kind of data
   //   res.send({ message: "Thanks for coming to localhost:4000 route" });
   //   res.send("<h1>Hello world</h1>");
+
   res.status(200).json({ message: "Hello world" });
 });
 
-import BirdRoute from "./routes/bird";
+import BirdRouter from "./routes/bird";
+import FileRouter from "./routes/file";
 
-app.use("/bird/:home", BirdRoute);
+app.use("/bird/:home", BirdRouter);
+app.use("/file", FileRouter);
 
 app.listen(3000, () => console.log("Server is running on port 3000"));

@@ -1,6 +1,9 @@
 import { Router } from "express";
 
-const router = Router({ mergeParams: true }); // 👉 "mergeParams keyword", merges the parent route "path parameter", Actually by default if on root "app.use("/home/:fileId", router)", it won't give the access of "fileId" on sub-routes we have to make this option true.
+// 👉 "mergeParams keyword", merges the parent route "path parameter", Actually by default if on root "app.use("/home/:fileId", router)", it won't give the access of "fileId" on sub-routes we have to make this option true.
+const router = Router({ mergeParams: true });
+
+// 👉 It's "Express" supports all HTTP methods, but there is a special method called ".all", that accepts all kind of methods from an endpoint.
 
 router
   .get("/", (req, res) => {
