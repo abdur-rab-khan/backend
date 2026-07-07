@@ -1,0 +1,21 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "./generated"
+  previewFeatures = ["views"]
+  runtime         = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id   String @id
+  name String
+}
+
+model movies {
+  id   Int     @id @default(autoincrement())
+  name String?
+  type String?
+}
