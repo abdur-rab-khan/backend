@@ -1,0 +1,45 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String  @id @default(uuid())
+  firstName String
+  lastName  String?
+  email     String  @unique
+  role      Role?   @default(USER)
+
+  // These fields are only for prisma client So that prisma client know about the relationships, but they will not be created in the database
+  profile Profile?
+  posts   Post[]
+}
+
+model Profile {
+  id         String  @id @default(uuid())
+  bio        String? @db.VarChar(255)
+  profileImg String?
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String  @unique
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+enum Role {
+  USER
+  ADMIN
+}
