@@ -1,5 +1,7 @@
 import path from "path";
 
+console.log("Name is: ", path.join(__dirname, "config"))
+
 // 👉 Helps to "join" multiple directory/file names into a path, It automatically handle "slash" based on "Operating System"
 const configPath = path.join("users", "home", "project", "configuration"); // --> "/users/home/project/configuration"
 console.log(configPath);
