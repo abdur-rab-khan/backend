@@ -12,7 +12,6 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const roleAccess = this.reflector.get(Roles, context.getHandler());
     console.log('Role Access', roleAccess);
-
     return false;
   }
 }
