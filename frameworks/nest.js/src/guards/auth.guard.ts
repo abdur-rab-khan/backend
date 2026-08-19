@@ -9,6 +9,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    // Reflector is used to get the "metadata" (roles) associated with the current handler
     const roleAccess = this.reflector.get(Roles, context.getHandler());
 
     console.log('Role Access', roleAccess);
