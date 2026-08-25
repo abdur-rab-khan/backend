@@ -9,6 +9,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { rm } from "node:fs/promises";
+import { stat } from "node:fs/promises";
 
 const PLAYING_PATH = path.resolve(__dirname, "./playing");
 
@@ -60,3 +61,11 @@ console.log("Is playing folder exists or not: ", existsSync(PLAYING_PATH));
 
 // 👉 glob: It's used to find folder/files using ""wild card""
 console.log(globSync(path.resolve(PLAYING_PATH, "./*.json")));
+
+try{
+  stat(PLAYING_PATH + "hello").then((pathStat) => {
+    console.log("Playing Path Stat is: ", pathStat);
+  });
+} catch(err) {
+  console.error("Error is: ", (err as Error)?.message ?? "An Unknown error occurred");
+}
